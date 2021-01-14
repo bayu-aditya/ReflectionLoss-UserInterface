@@ -1,0 +1,32 @@
+.root {
+  .body {
+    display: grid;
+    grid-template-columns: auto 335px;
+    column-gap: 15px;
+
+    .graph {
+      padding: 20px;
+      border-style: solid;
+      border-color: gainsboro;
+      border-width: 1px;
+    }
+
+    .input {
+      padding: 15px;
+
+      .textfield {
+        margin-bottom: 20px;
+      }
+
+      .twocolumn {
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 10px;
+      }
+
+      .button {
+        top: 0;
+      }
+    }
+  }
+}
