@@ -2,7 +2,7 @@ import React, { useMemo, useReducer } from "react";
 import { Line } from "react-chartjs-2";
 
 const dataInit = {
-  labels: ['1', '2', '3', '4', '5', '6'],
+  labels: [1, 2, 3, 4, 5, 6],
   datasets: [
     {
       label: "Reflection Loss",
@@ -18,10 +18,12 @@ const optionsInit = {
   scales: {
     xAxes: [
       {
+        scaleLabel: {
+          display: true,
+          labelString: 'Frequency (Hz)'
+        },
         ticks: {
-          max: 50,
-          min: 0,
-          stepSize: 0.5
+          maxTicksLimit: 10,
         }
       }
     ],
@@ -29,7 +31,7 @@ const optionsInit = {
       {
         scaleLabel: {
           display: true,
-          labelString: 'Reflection Loss'
+          labelString: 'Reflection Loss (dB)'
         },
         ticks: {
           beginAtZero: true,
@@ -41,10 +43,13 @@ const optionsInit = {
 
 type dataType = typeof dataInit
 type dataAction = 
+  | {type: "setFreq", payload: Array<number>}
   | {type: "setData", payload: Array<number>}
 
 const dataReducer = (prev: dataType, action: dataAction): dataType => {
   switch (action.type) {
+    case "setFreq":
+      return {...prev, labels: action.payload}
     case "setData":
       return {...prev, datasets: [...prev.datasets.map(el => ({...el, data: action.payload}))]}
     default:
@@ -53,6 +58,7 @@ const dataReducer = (prev: dataType, action: dataAction): dataType => {
 }
 
 export interface GraphProps {
+  frequency: Array<number>
   dataset: Array<{
     data: Array<number>
   }>
@@ -62,8 +68,9 @@ export const Graph: React.FC<GraphProps> = (props) => {
   const [data, setData] = useReducer(dataReducer, dataInit)
 
   useMemo(() => {
+    setData({type: "setFreq", payload: props.frequency})
     setData({type: "setData", payload: props.dataset[0].data})
-  }, [props.dataset])
+  }, [props.dataset, props.frequency])
 
   return (
     <Line 

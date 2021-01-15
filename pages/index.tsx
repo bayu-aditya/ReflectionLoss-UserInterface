@@ -1,6 +1,6 @@
 import { Fragment, useReducer, useState } from "react";
 import Head from "next/head";
-import Axios, { AxiosResponse } from "axios";
+import Axios from "axios";
 import { TextField, Button, Card, Typography } from "@material-ui/core";
 
 import { Graph } from "@components";
@@ -12,8 +12,8 @@ import styles from "./index.module.scss";
 const initSimulation = {
   absorber_thickness: 4.74,
   frequency: {
-    start: 1.2,
-    end: 18.8,
+    start: 0.0,
+    end: 1.0e8,
     num_data: 100
   },
   relative_permeability: {
@@ -64,12 +64,19 @@ const reducerSimulation = (prev: InitSimType, action: Action): InitSimType => {
 }
 
 type calcResponse = {
+  frequency: Array<number>
   absorption: Array<number>
 }
 
 export default function Home() {
   const [paramSim, setParamSim] = useReducer(reducerSimulation, initSimulation)
-  const [data, setData] = useState<Array<number>>([12, 19, 3, 10, 2, 3])
+  const [data, setData] = useState<{
+    freq: Array<number>
+    data: Array<number>
+  }>({
+    freq: [1, 2, 3, 4, 5, 6],
+    data: [12, 19, 3, 10, 2, 3]
+  })
 
   const handleCalculateSimulation = () => {
     let body = {
@@ -79,7 +86,10 @@ export default function Home() {
     Axios.post<calcResponse>(apiUrl.calculate, body)
     .then(resp => {
       console.log(resp.data)
-      setData(resp.data.absorption)
+      setData({
+        freq: resp.data.frequency,
+        data: resp.data.absorption
+      })
     })
   }
 
@@ -93,9 +103,10 @@ export default function Home() {
         <div className={styles.body}>
           <div className={styles.graph}>
             <Graph 
+              frequency={data.freq}
               dataset={[
                 {
-                  data: data
+                  data: data.data
                 }
               ]}
             />
@@ -109,8 +120,8 @@ export default function Home() {
                 label="Start"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.frequency.start || ""}
-                onChange={e => setParamSim({type: "setFreqStart", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.frequency.start}
+                onBlur={e => setParamSim({type: "setFreqStart", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
@@ -119,8 +130,8 @@ export default function Home() {
                 label="Stop"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.frequency.end || ""}
-                onChange={e => setParamSim({type: "setFreqEnd", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.frequency.end}
+                onBlur={e => setParamSim({type: "setFreqEnd", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
@@ -131,8 +142,8 @@ export default function Home() {
               label="Tebal Spesimen (cm)"
               placeholder="contoh: 0.4 untuk 0.4 cm"
               type="number"
-              value={paramSim.absorber_thickness || ""}
-              onChange={e => setParamSim({type: "setThickness", payload: parseFloat(e.target.value)})}
+              defaultValue={initSimulation.absorber_thickness}
+              onBlur={e => setParamSim({type: "setThickness", payload: parseFloat(e.target.value)})}
               fullWidth
               required
             />
@@ -168,8 +179,8 @@ export default function Home() {
                 label="Real"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.relative_permeability.real || ""}
-                onChange={e => setParamSim({type: "setMrReal", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.relative_permeability.real}
+                onBlur={e => setParamSim({type: "setMrReal", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
@@ -178,8 +189,8 @@ export default function Home() {
                 label="Imaginary"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.relative_permeability.imag || ""}
-                onChange={e => setParamSim({type: "setMrImag", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.relative_permeability.imag}
+                onBlur={e => setParamSim({type: "setMrImag", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
@@ -192,8 +203,8 @@ export default function Home() {
                 label="Real"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.relative_permitivity.real || ""}
-                onChange={e => setParamSim({type: "setErReal", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.relative_permitivity.real}
+                onBlur={e => setParamSim({type: "setErReal", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
@@ -202,8 +213,8 @@ export default function Home() {
                 label="Imaginary"
                 placeholder="contoh: 0.1"
                 type="number"
-                value={paramSim.relative_permitivity.imag || ""}
-                onChange={e => setParamSim({type: "setErImag", payload: parseFloat(e.target.value)})}
+                defaultValue={initSimulation.relative_permitivity.imag}
+                onBlur={e => setParamSim({type: "setErImag", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
               />
