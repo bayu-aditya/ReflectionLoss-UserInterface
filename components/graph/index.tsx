@@ -44,14 +44,20 @@ const optionsInit = {
 type dataType = typeof dataInit
 type dataAction = 
   | {type: "setFreq", payload: Array<string>}
-  | {type: "setData", payload: Array<number>}
+  | {type: "setDataset", payload: GraphProps["dataset"]}
 
 const dataReducer = (prev: dataType, action: dataAction): dataType => {
   switch (action.type) {
     case "setFreq":
       return {...prev, labels: action.payload}
-    case "setData":
-      return {...prev, datasets: [...prev.datasets.map(el => ({...el, data: action.payload}))]}
+    case "setDataset":
+      return {...prev, datasets: [...action.payload.map(el => ({
+        label: "label",
+        fill: false,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 0, 0)',
+        ...el
+      }))]}
     default:
       return prev
   }
@@ -61,6 +67,10 @@ export interface GraphProps {
   frequency: Array<string>
   dataset: Array<{
     data: Array<number>
+    label?: string,
+    fill?: boolean,
+    backgroundColor?: string,
+    borderColor?: string,
   }>
 }
 
@@ -69,7 +79,7 @@ export const Graph: React.FC<GraphProps> = (props) => {
 
   useMemo(() => {
     setData({type: "setFreq", payload: props.frequency})
-    setData({type: "setData", payload: props.dataset[0].data})
+    setData({type: "setDataset", payload: props.dataset})
   }, [props.dataset, props.frequency])
 
   return (

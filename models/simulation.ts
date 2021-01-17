@@ -59,7 +59,7 @@ export class SimulationModel {
     body: simulationRequestType, 
     onSuccess: (data: simulationDataType) => void
   ) {
-    Axios.post<simulationDataType>(apiUrl.calculate, body)
+    Axios.post<simulationDataType>(apiUrl.simulation.calculate, body)
     .then(resp => {
       this.data = resp.data
       onSuccess(resp.data)

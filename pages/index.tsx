@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <Fragment>
       <Head>
-        <title>Reflection Loss Simulation</title>
+        <title>Reflection Loss: Simulation</title>
       </Head>
 
       <div className={styles.root}>
@@ -83,7 +83,8 @@ export default function Home() {
               frequency={data.freq}
               dataset={[
                 {
-                  data: data.data
+                  data: data.data,
+                  label: "Reflection Loss"
                 }
               ]}
             />
@@ -205,26 +206,12 @@ export default function Home() {
             >
               Hitung
             </Button>
-
-            {/* <Button
-              className={styles.button}
-              component="label"
-              variant="outlined"
-              fullWidth
-            >
-              Unggah Data
-              <input 
-                id="file-unggah"
-                type="file"
-                style={{display: "none"}}
-              />
-            </Button> */}
           </Card>
         </div>
 
         <Card>
           <TableContainer style={{height: '300px'}}>
-            <Table stickyHeader>
+            <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Frekuensi (Hz)</TableCell>
