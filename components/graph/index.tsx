@@ -2,7 +2,7 @@ import React, { useMemo, useReducer } from "react";
 import { Line } from "react-chartjs-2";
 
 const dataInit = {
-  labels: [1, 2, 3, 4, 5, 6],
+  labels: ["1", "2", "3", "4", "5", "6"],
   datasets: [
     {
       label: "Reflection Loss",
@@ -43,7 +43,7 @@ const optionsInit = {
 
 type dataType = typeof dataInit
 type dataAction = 
-  | {type: "setFreq", payload: Array<number>}
+  | {type: "setFreq", payload: Array<string>}
   | {type: "setData", payload: Array<number>}
 
 const dataReducer = (prev: dataType, action: dataAction): dataType => {
@@ -58,7 +58,7 @@ const dataReducer = (prev: dataType, action: dataAction): dataType => {
 }
 
 export interface GraphProps {
-  frequency: Array<number>
+  frequency: Array<string>
   dataset: Array<{
     data: Array<number>
   }>

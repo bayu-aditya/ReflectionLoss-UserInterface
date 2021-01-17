@@ -1,38 +1,22 @@
 import { Fragment, useReducer, useState } from "react";
 import Head from "next/head";
-import Axios from "axios";
-import { TextField, Button, Card, Typography } from "@material-ui/core";
+import { 
+  TextField, 
+  Button, 
+  Card, 
+  Typography, 
+  TableContainer, 
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody} from "@material-ui/core";
 
 import { Graph } from "@components";
-import { apiUrl } from "@variables";
+import { SimulationModel, simulationRequestType } from "@models";
 
 import styles from "./index.module.scss";
 
-
-const initSimulation = {
-  absorber_thickness: 4.74,
-  frequency: {
-    start: 0.0,
-    end: 1.0e8,
-    num_data: 100
-  },
-  relative_permeability: {
-    real: 0.7,
-    imag: -0.1
-  },
-  relative_permitivity: {
-    real: 2.0,
-    imag: 0.9
-  },
-  option: {
-    show: {
-      impedance: false,
-      absorption: true
-    }
-  }
-}
-
-type InitSimType = typeof initSimulation
 type Action = 
   | {type: "setThickness", payload: number}
   | {type: "setFreqStart", payload: number}
@@ -42,7 +26,7 @@ type Action =
   | {type: "setErReal", payload: number}
   | {type: "setErImag", payload: number}
 
-const reducerSimulation = (prev: InitSimType, action: Action): InitSimType => {
+const reducerSimulation = (prev: simulationRequestType, action: Action): simulationRequestType => {
   switch (action.type) {
     case "setThickness":
       return {...prev, absorber_thickness: action.payload}
@@ -63,18 +47,15 @@ const reducerSimulation = (prev: InitSimType, action: Action): InitSimType => {
   }
 }
 
-type calcResponse = {
-  frequency: Array<number>
-  absorption: Array<number>
-}
+const Simulation = new SimulationModel()
 
 export default function Home() {
-  const [paramSim, setParamSim] = useReducer(reducerSimulation, initSimulation)
+  const [paramSim, setParamSim] = useReducer(reducerSimulation, Simulation.request)
   const [data, setData] = useState<{
-    freq: Array<number>
+    freq: Array<string>
     data: Array<number>
   }>({
-    freq: [1, 2, 3, 4, 5, 6],
+    freq: ["1", "2", "3", "4", "5", "6"],
     data: [12, 19, 3, 10, 2, 3]
   })
 
@@ -83,14 +64,10 @@ export default function Home() {
       ...paramSim
     }
 
-    Axios.post<calcResponse>(apiUrl.calculate, body)
-    .then(resp => {
-      console.log(resp.data)
-      setData({
-        freq: resp.data.frequency,
-        data: resp.data.absorption
-      })
-    })
+    Simulation.calculate(body, data => setData({
+      freq: data.frequency.label,
+      data: data.reflection_loss
+    }))
   }
 
   return (
@@ -101,7 +78,7 @@ export default function Home() {
 
       <div className={styles.root}>
         <div className={styles.body}>
-          <div className={styles.graph}>
+          <Card className={styles.graph}>
             <Graph 
               frequency={data.freq}
               dataset={[
@@ -110,7 +87,7 @@ export default function Home() {
                 }
               ]}
             />
-          </div>
+          </Card>
 
           <Card className={styles.input}>
             <Typography>Frekuensi (Hz)</Typography>
@@ -120,7 +97,7 @@ export default function Home() {
                 label="Start"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.frequency.start}
+                defaultValue={paramSim.frequency.start}
                 onBlur={e => setParamSim({type: "setFreqStart", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -130,7 +107,7 @@ export default function Home() {
                 label="Stop"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.frequency.end}
+                defaultValue={paramSim.frequency.end}
                 onBlur={e => setParamSim({type: "setFreqEnd", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -142,7 +119,7 @@ export default function Home() {
               label="Tebal Spesimen (cm)"
               placeholder="contoh: 0.4 untuk 0.4 cm"
               type="number"
-              defaultValue={initSimulation.absorber_thickness}
+              defaultValue={paramSim.absorber_thickness}
               onBlur={e => setParamSim({type: "setThickness", payload: parseFloat(e.target.value)})}
               fullWidth
               required
@@ -179,7 +156,7 @@ export default function Home() {
                 label="Real"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.relative_permeability.real}
+                defaultValue={paramSim.relative_permeability.real}
                 onBlur={e => setParamSim({type: "setMrReal", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -189,7 +166,7 @@ export default function Home() {
                 label="Imaginary"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.relative_permeability.imag}
+                defaultValue={paramSim.relative_permeability.imag}
                 onBlur={e => setParamSim({type: "setMrImag", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -203,7 +180,7 @@ export default function Home() {
                 label="Real"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.relative_permitivity.real}
+                defaultValue={paramSim.relative_permitivity.real}
                 onBlur={e => setParamSim({type: "setErReal", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -213,7 +190,7 @@ export default function Home() {
                 label="Imaginary"
                 placeholder="contoh: 0.1"
                 type="number"
-                defaultValue={initSimulation.relative_permitivity.imag}
+                defaultValue={paramSim.relative_permitivity.imag}
                 onBlur={e => setParamSim({type: "setErImag", payload: parseFloat(e.target.value)})}
                 fullWidth
                 required
@@ -245,9 +222,30 @@ export default function Home() {
           </Card>
         </div>
 
-        <div>
-          <Button>Unduh</Button>
-        </div>
+        <Card>
+          <TableContainer style={{height: '300px'}}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Frekuensi (Hz)</TableCell>
+                  <TableCell>Impedance Real</TableCell>
+                  <TableCell>Impedance Imag</TableCell>
+                  <TableCell>Reflection Loss (dB)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Simulation.data.frequency.value.map((el, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{el}</TableCell>
+                    <TableCell>{Simulation.data.impedance.real[idx]}</TableCell>
+                    <TableCell>{Simulation.data.impedance.imag[idx]}</TableCell>
+                    <TableCell>{Simulation.data.reflection_loss[idx]}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
       </div>
     </Fragment>
   )

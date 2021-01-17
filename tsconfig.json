@@ -20,7 +20,8 @@
     "baseUrl": ".",
     "paths": {
       "@components": ["components"],
-      "@variables": ["variables"]
+      "@variables": ["variables"],
+      "@models": ["models"]
     }
   },
   "include": [
