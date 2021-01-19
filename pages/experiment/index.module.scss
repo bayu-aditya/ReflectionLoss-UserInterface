@@ -1,0 +1,21 @@
+.root {
+  .body {
+    display: grid;
+    grid-template-columns: auto 300px;
+    grid-column-gap: 15px;
+
+    .graphs {
+      display: grid;
+      grid-template-columns: auto auto;
+      padding: 10px;
+
+      .graph {
+        width: 500px;
+      }
+    }
+
+    .panel {
+      padding: 10px;
+    }
+  }
+}
