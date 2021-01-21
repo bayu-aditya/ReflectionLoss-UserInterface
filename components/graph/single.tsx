@@ -8,6 +8,7 @@ const dataInit = {
       label: "Reflection Loss",
       data: [12, 19, 3, 10, 2, 3],
       fill: false,
+      pointRadius: 3,
       backgroundColor: 'rgb(255, 99, 132)',
       borderColor: 'rgb(255, 0, 0)',
     },
@@ -54,6 +55,7 @@ const dataReducer = (prev: dataType, action: dataAction): dataType => {
       return {...prev, datasets: [...action.payload.map(el => ({
         label: "label",
         fill: false,
+        pointRadius: 3,
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 0, 0)',
         ...el
@@ -69,6 +71,7 @@ export interface GraphProps extends React.HTMLAttributes<HTMLDivElement> {
     data: Array<number>
     label?: string,
     fill?: boolean,
+    pointRadius?: number,
     backgroundColor?: string,
     borderColor?: string,
   }>

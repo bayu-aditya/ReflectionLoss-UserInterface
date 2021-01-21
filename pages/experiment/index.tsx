@@ -16,7 +16,7 @@ import {
   initDataset, 
   calculateExperimentType,
   initCalculateExperiment } from "@models";
-import { Graph, MultiGraph } from "@components";
+import { MultiGraph } from "@components";
 
 import styles from "./index.module.scss";
 
@@ -45,7 +45,7 @@ export default function ExperimentPage() {
         <title>Reflection Loss: Experiment</title>
       </Head>
 
-      <div hidden>
+      <div>
         <Button
           component="label"
           variant="outlined"

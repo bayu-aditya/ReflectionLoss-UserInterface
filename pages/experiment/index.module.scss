@@ -6,11 +6,11 @@
 
     .graphs {
       display: grid;
-      grid-template-columns: auto auto;
+      grid-template-columns: auto;
       padding: 10px;
 
       .graph {
-        width: 500px;
+        // width: 500px;
       }
     }
 

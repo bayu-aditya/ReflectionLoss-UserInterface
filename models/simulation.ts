@@ -10,7 +10,10 @@ type simulationDataType = {
     real: Array<number>,
     imag: Array<number>
   },
-  reflection_loss: Array<number>
+  reflection_loss: {
+    original: Array<number>
+    filter: Array<number>
+  }
 }
 
 const initSimulationData: simulationDataType= {
@@ -22,7 +25,10 @@ const initSimulationData: simulationDataType= {
     real: [],
     imag: []
   },
-  reflection_loss: []
+  reflection_loss: {
+    original: [],
+    filter: []
+  }
 }
 
 const initSimulationRequest = {
@@ -44,6 +50,10 @@ const initSimulationRequest = {
     show: {
       impedance: true,
       absorption: true
+    },
+    savgol_filter: {
+      window_length: 5,
+      polyorder: 2
     }
   }
 }

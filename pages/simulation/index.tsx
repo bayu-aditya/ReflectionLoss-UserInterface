@@ -53,10 +53,16 @@ export default function SimulationPage() {
   const [paramSim, setParamSim] = useReducer(reducerSimulation, Simulation.request)
   const [data, setData] = useState<{
     freq: Array<string>
-    data: Array<number>
+    reflectionLoss: {
+      original: Array<number>
+      filter: Array<number>
+    }
   }>({
     freq: ["1", "2", "3", "4", "5", "6"],
-    data: [12, 19, 3, 10, 2, 3]
+    reflectionLoss: {
+      original: [12, 19, 3, 10, 2, 3],
+      filter: [12, 19, 3, 10, 2, 3]
+    }
   })
 
   const handleCalculateSimulation = () => {
@@ -66,7 +72,7 @@ export default function SimulationPage() {
 
     Simulation.calculate(body, data => setData({
       freq: data.frequency.label,
-      data: data.reflection_loss
+      reflectionLoss: data.reflection_loss
     }))
   }
 
@@ -83,8 +89,15 @@ export default function SimulationPage() {
               frequency={data.freq}
               dataset={[
                 {
-                  data: data.data,
-                  label: "Reflection Loss"
+                  data: data.reflectionLoss.original,
+                  label: "Original",
+                  borderColor: 'rgba(255, 0, 0, 0.2)',
+                },
+                {
+                  data: data.reflectionLoss.filter,
+                  label: "Filter",
+                  borderColor: 'rgb(255, 0, 0)',
+                  pointRadius: 0,
                 }
               ]}
             />
@@ -126,7 +139,7 @@ export default function SimulationPage() {
               required
             />
             
-            <Typography>Panjang Gelombang</Typography>
+            {/* <Typography>Panjang Gelombang</Typography>
             <div className={styles.twocolumn}>
               <TextField 
                 className={styles.textfield}
@@ -148,7 +161,7 @@ export default function SimulationPage() {
                 required
                 disabled
               />
-            </div>
+            </div> */}
 
             <Typography>Permeabilitas Relatif</Typography>
             <div className={styles.twocolumn}>
@@ -226,7 +239,7 @@ export default function SimulationPage() {
                     <TableCell>{el}</TableCell>
                     <TableCell>{Simulation.data.impedance.real[idx]}</TableCell>
                     <TableCell>{Simulation.data.impedance.imag[idx]}</TableCell>
-                    <TableCell>{Simulation.data.reflection_loss[idx]}</TableCell>
+                    <TableCell>{Simulation.data.reflection_loss.original[idx]}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
