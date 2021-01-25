@@ -1,79 +1,59 @@
-import { Fragment, useReducer, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
-import { 
-  TextField, 
-  Button, 
-  Card, 
-  Typography, 
-  TableContainer, 
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody} from "@material-ui/core";
+import { Card, Tab, Tabs } from "@material-ui/core";
 
 import { Graph } from "@components";
-import { SimulationModel, simulationRequestType } from "@models";
+import { SimulationModel } from "@models";
 
+import { SimulationProvider, useSimulation } from "./context";
+import { Panel } from "./panel";
+import { DatasetDialog } from "./dataset";
 import styles from "./index.module.scss";
 
-type Action = 
-  | {type: "setThickness", payload: number}
-  | {type: "setFreqStart", payload: number}
-  | {type: "setFreqEnd", payload: number}
-  | {type: "setMrReal", payload: number}
-  | {type: "setMrImag", payload: number}
-  | {type: "setErReal", payload: number}
-  | {type: "setErImag", payload: number}
-
-const reducerSimulation = (prev: simulationRequestType, action: Action): simulationRequestType => {
-  switch (action.type) {
-    case "setThickness":
-      return {...prev, absorber_thickness: action.payload}
-    case "setFreqStart":
-      return {...prev, frequency: {...prev.frequency, start: action.payload}}
-    case "setFreqEnd":
-      return {...prev, frequency: {...prev.frequency, end: action.payload}}
-    case "setMrReal":
-      return {...prev, relative_permeability: {...prev.relative_permeability, real: action.payload}}
-    case "setMrImag":
-      return {...prev, relative_permeability: {...prev.relative_permeability, imag: action.payload}}
-    case "setErReal":
-      return {...prev, relative_permitivity: {...prev.relative_permitivity, real: action.payload}}
-    case "setErImag":
-      return {...prev, relative_permitivity: {...prev.relative_permitivity, imag: action.payload}}
-    default:
-      return prev
-  }
-}
 
 const Simulation = new SimulationModel()
 
 export default function SimulationPage() {
-  const [paramSim, setParamSim] = useReducer(reducerSimulation, Simulation.request)
-  const [data, setData] = useState<{
-    freq: Array<string>
-    reflectionLoss: {
-      original: Array<number>
-      filter: Array<number>
-    }
-  }>({
-    freq: ["1", "2", "3", "4", "5", "6"],
-    reflectionLoss: {
-      original: [12, 19, 3, 10, 2, 3],
-      filter: [12, 19, 3, 10, 2, 3]
-    }
-  })
+  return (
+    <SimulationProvider>
+      <SimulationBody />
+    </SimulationProvider>
+  )
+}
+
+function SimulationBody() {
+  const [store, dispatch] = useSimulation()
+  const [mode, setMode] = useState<"static" | "dynamic">("static")
+  const [openDataset, setOpenDataset] = useState<boolean>(false)
+  const [graphMode, setGraphMode] = useState<number>(0)
+
+  useEffect(() => {
+    Simulation.getInputData(data => {
+      dispatch({type: "setInputData", payload: data})
+    })
+  }, [])
+
+  const handleUploadInput = (file: File | undefined) => {
+    if (file === undefined) { return }
+    Simulation.uploadInputData(file, () => {
+      Simulation.getInputData(data => {
+        dispatch({type: "setInputData", payload: data})
+      })
+    })
+  }
 
   const handleCalculateSimulation = () => {
-    let body = {
-      ...paramSim
-    }
+    let body = store.request
 
-    Simulation.calculate(body, data => setData({
-      freq: data.frequency.label,
-      reflectionLoss: data.reflection_loss
-    }))
+    if (mode === "static") {
+      Simulation.calculate(body, data => {
+        dispatch({type: "setDataCalculation", payload: data})
+      })
+    } else {
+      Simulation.calculateWithData(body, data => {
+        dispatch({type: "setDataCalculation", payload: data})
+      })
+    }
   }
 
   return (
@@ -82,147 +62,82 @@ export default function SimulationPage() {
         <title>Reflection Loss: Simulation</title>
       </Head>
 
+      <DatasetDialog 
+        open={openDataset}
+        onClose={() => setOpenDataset(false)}
+        onUploadDataset={handleUploadInput}
+      />
+
       <div className={styles.root}>
         <div className={styles.body}>
           <Card className={styles.graph}>
+            <Tabs
+              value={graphMode}
+              onChange={(_, val) => setGraphMode(val)}
+            >
+              <Tab label="Reflection Loss" />
+              <Tab label="Impedansi" />
+            </Tabs>
+
             <Graph 
-              frequency={data.freq}
+              hidden={graphMode !== 0}
+              frequency={store.data.frequency.label}
               dataset={[
                 {
-                  data: data.reflectionLoss.original,
+                  data: store.data.reflection_loss.original,
                   label: "Original",
                   borderColor: 'rgba(255, 0, 0, 0.2)',
                 },
                 {
-                  data: data.reflectionLoss.filter,
+                  data: store.data.reflection_loss.filter,
                   label: "Filter",
                   borderColor: 'rgb(255, 0, 0)',
                   pointRadius: 0,
                 }
               ]}
             />
-          </Card>
 
-          <Card className={styles.input}>
-            <Typography>Frekuensi (Hz)</Typography>
-            <div className={styles.twocolumn}>
-              <TextField 
-                className={styles.textfield}
-                label="Start"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.frequency.start}
-                onBlur={e => setParamSim({type: "setFreqStart", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-              <TextField 
-                className={styles.textfield}
-                label="Stop"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.frequency.end}
-                onBlur={e => setParamSim({type: "setFreqEnd", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-            </div>
-
-            <TextField 
-              className={styles.textfield}
-              label="Tebal Spesimen (cm)"
-              placeholder="contoh: 0.4 untuk 0.4 cm"
-              type="number"
-              defaultValue={paramSim.absorber_thickness}
-              onBlur={e => setParamSim({type: "setThickness", payload: parseFloat(e.target.value)})}
-              fullWidth
-              required
+            <Graph 
+              hidden={graphMode !== 1}
+              frequency={store.data.frequency.label}
+              dataset={[
+                {
+                  data: store.data.impedance.real,
+                  label: "Real",
+                  borderColor: 'rgba(255, 0, 0, 0.2)',
+                },
+                {
+                  data: store.data.impedance.real_filter,
+                  label: "Real Filter",
+                  borderColor: 'rgb(255, 0, 0)',
+                  pointRadius: 0,
+                },
+                {
+                  data: store.data.impedance.imag,
+                  label: "Imag",
+                  borderColor: 'rgba(0, 0, 250, 0.2)',
+                  backgroundColor: 'rgb(0, 0, 250)',
+                },
+                {
+                  data: store.data.impedance.imag_filter,
+                  label: "Imag Filter",
+                  borderColor: 'rgb(0, 0, 250)',
+                  backgroundColor: 'rgb(0, 0, 250)',
+                  pointRadius: 0,
+                },
+              ]}
             />
-            
-            {/* <Typography>Panjang Gelombang</Typography>
-            <div className={styles.twocolumn}>
-              <TextField 
-                className={styles.textfield}
-                label="Ruang Hampa (m)"
-                placeholder="contoh: 0.4 untuk 0.4 m"
-                type="number"
-                value={"2.75"}
-                fullWidth
-                required
-                disabled
-              />
-              <TextField 
-                className={styles.textfield}
-                label="Cutoff (m)"
-                placeholder="contoh: 0.4 untuk 0.4 m"
-                type="number"
-                value={"3.98"}
-                fullWidth
-                required
-                disabled
-              />
-            </div> */}
-
-            <Typography>Permeabilitas Relatif</Typography>
-            <div className={styles.twocolumn}>
-              <TextField 
-                className={styles.textfield}
-                label="Real"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.relative_permeability.real}
-                onBlur={e => setParamSim({type: "setMrReal", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-              <TextField 
-                className={styles.textfield}
-                label="Imaginary"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.relative_permeability.imag}
-                onBlur={e => setParamSim({type: "setMrImag", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-            </div>
-
-            <Typography>Permitivitas Relatif</Typography>
-            <div className={styles.twocolumn}>
-              <TextField 
-                className={styles.textfield}
-                label="Real"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.relative_permitivity.real}
-                onBlur={e => setParamSim({type: "setErReal", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-              <TextField 
-                className={styles.textfield}
-                label="Imaginary"
-                placeholder="contoh: 0.1"
-                type="number"
-                defaultValue={paramSim.relative_permitivity.imag}
-                onBlur={e => setParamSim({type: "setErImag", payload: parseFloat(e.target.value)})}
-                fullWidth
-                required
-              />
-            </div>
-
-            <Button
-              className={styles.button}
-              variant="outlined"
-              onClick={handleCalculateSimulation}
-              fullWidth
-            >
-              Hitung
-            </Button>
           </Card>
+
+          <Panel 
+            mode={mode}
+            onChangeMode={val => setMode(val)}
+            onClickDataset={() => setOpenDataset(true)}
+            onSubmit={handleCalculateSimulation}
+          />
         </div>
 
-        <Card>
+        {/* <Card>
           <TableContainer style={{height: '300px'}}>
             <Table stickyHeader size="small">
               <TableHead>
@@ -245,7 +160,7 @@ export default function SimulationPage() {
               </TableBody>
             </Table>
           </TableContainer>
-        </Card>
+        </Card> */}
       </div>
     </Fragment>
   )

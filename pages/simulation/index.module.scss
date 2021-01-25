@@ -30,3 +30,28 @@
     }
   }
 }
+
+.panel {
+  padding: 15px;
+
+  .textfield {
+    margin-bottom: 20px;
+  }
+
+  .twocolumn {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+  }
+
+  .button {
+    top: 0;
+  }
+}
+
+.dataset {
+  height: 90vh;
+  display: grid;
+  grid-template-columns: auto 300px;
+  column-gap: 20px;
+}

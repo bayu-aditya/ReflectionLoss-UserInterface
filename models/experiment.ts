@@ -98,13 +98,13 @@ export class ExperimentModel {
 
     Axios.post<responseUploadDatasetType>(apiUrl.experiment.data, formData)
     .then(resp => {
-      Cookies.set("key", resp.data.key, { expires: 1 })
+      Cookies.set("key_experiment", resp.data.key, { expires: 1 })
       onSuccess && onSuccess()
     })
   }
 
   getDataset(onSuccess?: (data: datasetExperimentType) => void) {
-    let key = Cookies.get("key")
+    let key = Cookies.get("key_experiment")
 
     Axios.get<responseDatasetType>(apiUrl.experiment.data, {
       headers: {"key": key}
