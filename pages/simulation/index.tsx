@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
-import { Card, Tab, Tabs } from "@material-ui/core";
+import { Card, Tab, Tabs, Divider } from "@material-ui/core";
 
-import { Graph } from "@components";
+import { Graph, MainLayout } from "@components";
 import { SimulationModel } from "@models";
 
 import { SimulationProvider, useSimulation } from "./context";
@@ -16,7 +16,9 @@ const Simulation = new SimulationModel()
 export default function SimulationPage() {
   return (
     <SimulationProvider>
-      <SimulationBody />
+      <MainLayout>
+        <SimulationBody />
+      </MainLayout>
     </SimulationProvider>
   )
 }
@@ -78,6 +80,7 @@ function SimulationBody() {
               <Tab label="Reflection Loss" />
               <Tab label="Impedansi" />
             </Tabs>
+            <Divider />
 
             <Graph 
               hidden={graphMode !== 0}
@@ -136,31 +139,6 @@ function SimulationBody() {
             onSubmit={handleCalculateSimulation}
           />
         </div>
-
-        {/* <Card>
-          <TableContainer style={{height: '300px'}}>
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Frekuensi (Hz)</TableCell>
-                  <TableCell>Impedance Real</TableCell>
-                  <TableCell>Impedance Imag</TableCell>
-                  <TableCell>Reflection Loss (dB)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Simulation.data.frequency.value.map((el, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{el}</TableCell>
-                    <TableCell>{Simulation.data.impedance.real[idx]}</TableCell>
-                    <TableCell>{Simulation.data.impedance.imag[idx]}</TableCell>
-                    <TableCell>{Simulation.data.reflection_loss.original[idx]}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Card> */}
       </div>
     </Fragment>
   )

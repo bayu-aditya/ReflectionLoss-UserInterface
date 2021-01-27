@@ -58,35 +58,48 @@ export type calculateExperimentType = {
   },
   reflectance: {
     real: Array<number>,
+    real_filter: Array<number>,
     imag: Array<number>,
+    imag_filter: Array<number>,
   },
   transmitance: {
     real: Array<number>,
+    real_filter: Array<number>,
     imag: Array<number>,
+    imag_filter: Array<number>,
   },
   relative_permeability: {
     real: Array<number>,
+    real_filter: Array<number>,
     imag: Array<number>,
+    imag_filter: Array<number>,
   },
   relative_permitivity: {
     real: Array<number>,
+    real_filter: Array<number>,
     imag: Array<number>,
+    imag_filter: Array<number>,
   },
   impedance: {
     real: Array<number>,
+    real_filter: Array<number>,
     imag: Array<number>,
+    imag_filter: Array<number>,
   },
-  reflection_loss: Array<number>
+  reflection_loss: {
+    original: Array<number>
+    filter: Array<number>
+  }
 }
 
 export const initCalculateExperiment: calculateExperimentType = {
   frequency: {label: [], value: []},
-  reflectance: {real: [], imag: []},
-  transmitance: {real: [], imag: []},
-  relative_permeability: {real: [], imag: []},
-  relative_permitivity: {real: [], imag: []},
-  impedance: {real: [], imag: []},
-  reflection_loss: []
+  reflectance: {real: [], real_filter: [], imag: [], imag_filter: []},
+  transmitance: {real: [], real_filter: [], imag: [], imag_filter: []},
+  relative_permeability: {real: [], real_filter: [], imag: [], imag_filter: []},
+  relative_permitivity: {real: [], real_filter: [], imag: [], imag_filter: []},
+  impedance: {real: [], real_filter: [], imag: [], imag_filter: []},
+  reflection_loss: {original: [], filter: []}
 }
 
 export class ExperimentModel {
@@ -170,9 +183,15 @@ export class ExperimentModel {
   calculate(
     onSuccess?: (data: calculateExperimentType) => void
   ) {
-    let key = Cookies.get("key")
+    let key = Cookies.get("key_experiment")
     let body = {
-      thickness: 4.731e-3
+      thickness: 4.731e-3,
+      option: {
+        savgol_filter: {
+          window_length: 9,
+          polyorder: 2
+        }
+    }
     }
     
     Axios.post<calculateExperimentType>(apiUrl.experiment.calculate, body, {

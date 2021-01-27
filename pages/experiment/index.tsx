@@ -3,12 +3,9 @@ import Head from "next/head";
 import { 
   Button, 
   Card, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead,
-  TableRow} from "@material-ui/core";
+  Divider, 
+  Tab, 
+  Tabs} from "@material-ui/core";
 
 import { 
   ExperimentModel, 
@@ -16,15 +13,29 @@ import {
   initDataset, 
   calculateExperimentType,
   initCalculateExperiment } from "@models";
-import { MultiGraph } from "@components";
+import { MainLayout, Graph } from "@components";
 
+import { ExperimentProvider } from "./context";
 import styles from "./index.module.scss";
 
 const Experiment = new ExperimentModel()
 
-export default function ExperimentPage() { 
+
+export default function ExperimentPage() {
+  return (
+    <ExperimentProvider>
+      <MainLayout>
+        <ExperimentBody />
+      </MainLayout>
+    </ExperimentProvider>
+  )  
+}
+
+const ExperimentBody: React.FC = () =>  { 
   const [dataset, setDataset] = useState<datasetExperimentType>(initDataset)
   const [dataCalc, setDataCalc] = useState<calculateExperimentType>(initCalculateExperiment)
+
+  const [graphMode, setGraphMode] = useState<number>(0)
   
   const handleUploadFile = (file: File | undefined) => {
     if (file === undefined) { return }
@@ -45,7 +56,7 @@ export default function ExperimentPage() {
         <title>Reflection Loss: Experiment</title>
       </Head>
 
-      <div>
+      {/* <div>
         <Button
           component="label"
           variant="outlined"
@@ -104,107 +115,203 @@ export default function ExperimentPage() {
             </Table>
           </TableContainer>
         </Card>
-      </div>
+      </div> */}
 
       <div className={styles.body}>
         <Card>
-          <MultiGraph 
-            className={styles.graphs}
-            configs={[
+          <Tabs
+            value={graphMode}
+            onChange={(_, val) => setGraphMode(val)}
+          >
+            <Tab label="Reflection Loss" />
+            <Tab label="Impedansi" />
+            <Tab label="Permitivitas" />
+            <Tab label="Permeabilitas" />
+            <Tab label="Transmitansi" />
+            <Tab label="Reflektansi" />
+          </Tabs>
+          <Divider />
+
+          <Graph 
+            hidden={graphMode !== 0}
+            frequency={dataCalc.frequency.label}
+            dataset={[
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.reflection_loss,
-                    label: "Reflection Loss"
-                  }
-                ]
+                data: dataCalc.reflection_loss.original,
+                label: "Reflection Loss",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
               },
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.impedance.real,
-                    label: "Impedance Real",
-                    borderColor: 'rgb(255, 0, 0)',
-                  },
-                  {
-                    data: dataCalc.impedance.imag,
-                    label: "Impedance Imag",
-                    backgroundColor: 'rgb(100, 100, 250)',
-                    borderColor: 'rgb(100, 100, 250)',
-                  }
-                ]
+                data: dataCalc.reflection_loss.filter,
+                label: "Reflection Loss (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
+              }
+            ]}
+          />
+
+          <Graph 
+            hidden={graphMode !== 1}
+            frequency={dataCalc.frequency.label}
+            dataset={[
+              {
+                data: dataCalc.impedance.real,
+                label: "Real",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
               },
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.relative_permitivity.real,
-                    label: "Relative Permitivity Real",
-                    borderColor: 'rgb(255, 0, 0)',
-                  },
-                  {
-                    data: dataCalc.relative_permitivity.imag,
-                    label: "Relative Permitivity Imag",
-                    backgroundColor: 'rgb(100, 100, 250)',
-                    borderColor: 'rgb(100, 100, 250)',
-                  }
-                ]
+                data: dataCalc.impedance.real_filter,
+                label: "Real (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
               },
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.relative_permeability.real,
-                    label: "Relative Permeability Real",
-                    borderColor: 'rgb(255, 0, 0)',
-                  },
-                  {
-                    data: dataCalc.relative_permeability.imag,
-                    label: "Relative Permeability Imag",
-                    backgroundColor: 'rgb(100, 100, 250)',
-                    borderColor: 'rgb(100, 100, 250)',
-                  }
-                ]
+                data: dataCalc.impedance.imag,
+                label: "Imag",
+                borderColor: 'rgba(0, 0, 255, 0.1)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 2,
               },
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.transmitance.real,
-                    label: "Transmitance Real",
-                    borderColor: 'rgb(255, 0, 0)',
-                  },
-                  {
-                    data: dataCalc.transmitance.imag,
-                    label: "Transmitance Imag",
-                    backgroundColor: 'rgb(100, 100, 250)',
-                    borderColor: 'rgb(100, 100, 250)',
-                  }
-                ]
+                data: dataCalc.impedance.imag_filter,
+                label: "Imag (Filter)",
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 0,
+              }
+            ]}
+          />
+
+          <Graph 
+            hidden={graphMode !== 2}
+            frequency={dataCalc.frequency.label}
+            dataset={[
+              {
+                data: dataCalc.relative_permitivity.real,
+                label: "Real",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
               },
               {
-                className: styles.graph,
-                frequency: dataCalc.frequency.label,
-                dataset: [
-                  {
-                    data: dataCalc.reflectance.real,
-                    label: "Reflectance Real",
-                    borderColor: 'rgb(255, 0, 0)',
-                  },
-                  {
-                    data: dataCalc.reflectance.imag,
-                    label: "Reflectance Imag",
-                    backgroundColor: 'rgb(100, 100, 250)',
-                    borderColor: 'rgb(100, 100, 250)',
-                  }
-                ]
+                data: dataCalc.relative_permitivity.real_filter,
+                label: "Real (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
+              },
+              {
+                data: dataCalc.relative_permitivity.imag,
+                label: "Imag",
+                borderColor: 'rgba(0, 0, 255, 0.1)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.relative_permitivity.imag_filter,
+                label: "Imag (Filter)",
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 0,
+              }
+            ]}
+          />
+
+          <Graph 
+            hidden={graphMode !== 3}
+            frequency={dataCalc.frequency.label}
+            dataset={[
+              {
+                data: dataCalc.relative_permeability.real,
+                label: "Real",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.relative_permeability.real_filter,
+                label: "Real (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
+              },
+              {
+                data: dataCalc.relative_permeability.imag,
+                label: "Imag",
+                borderColor: 'rgba(0, 0, 255, 0.1)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.relative_permeability.imag_filter,
+                label: "Imag (Filter)",
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 0,
+              }
+            ]}
+          />
+
+          <Graph 
+            hidden={graphMode !== 4}
+            frequency={dataCalc.frequency.label}
+            dataset={[
+              {
+                data: dataCalc.transmitance.real,
+                label: "Real",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.transmitance.real_filter,
+                label: "Real (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
+              },
+              {
+                data: dataCalc.transmitance.imag,
+                label: "Imag",
+                borderColor: 'rgba(0, 0, 255, 0.1)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.transmitance.imag_filter,
+                label: "Imag (Filter)",
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 0,
+              }
+            ]}
+          />
+
+          <Graph 
+            hidden={graphMode !== 5}
+            frequency={dataCalc.frequency.label}
+            dataset={[
+              {
+                data: dataCalc.reflectance.real,
+                label: "Real",
+                borderColor: 'rgba(255, 0, 0, 0.1)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.reflectance.real_filter,
+                label: "Real (Filter)",
+                borderColor: 'rgb(255, 0, 0)',
+                pointRadius: 0,
+              },
+              {
+                data: dataCalc.reflectance.imag,
+                label: "Imag",
+                borderColor: 'rgba(0, 0, 255, 0.1)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 2,
+              },
+              {
+                data: dataCalc.reflectance.imag_filter,
+                label: "Imag (Filter)",
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                pointRadius: 0,
               }
             ]}
           />
