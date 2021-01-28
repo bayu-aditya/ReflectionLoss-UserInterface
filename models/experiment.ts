@@ -185,7 +185,9 @@ export class ExperimentModel {
   ) {
     let key = Cookies.get("key_experiment")
     let body = {
-      thickness: 4.731e-3,
+      thickness: 4.731,
+      lambda_0: 2.75,
+      lambda_C: 3.98,
       option: {
         savgol_filter: {
           window_length: 9,

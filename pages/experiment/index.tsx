@@ -5,6 +5,12 @@ import {
   Card, 
   Divider, 
   Tab, 
+  Table, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  TableBody,
   Tabs} from "@material-ui/core";
 
 import { 
@@ -16,6 +22,7 @@ import {
 import { MainLayout, Graph } from "@components";
 
 import { ExperimentProvider } from "./context";
+import { Panel } from "./panel";
 import styles from "./index.module.scss";
 
 const Experiment = new ExperimentModel()
@@ -56,7 +63,7 @@ const ExperimentBody: React.FC = () =>  {
         <title>Reflection Loss: Experiment</title>
       </Head>
 
-      {/* <div>
+      <div hidden>
         <Button
           component="label"
           variant="outlined"
@@ -115,7 +122,7 @@ const ExperimentBody: React.FC = () =>  {
             </Table>
           </TableContainer>
         </Card>
-      </div> */}
+      </div>
 
       <div className={styles.body}>
         <Card>
@@ -317,23 +324,10 @@ const ExperimentBody: React.FC = () =>  {
           />
         </Card>
 
-        <Card className={styles.panel}>
-          <Button
-            variant="outlined"
-            fullWidth
-            // onClick={handleCalculate}
-          >
-            Dataset
-          </Button>
-          
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={handleCalculate}
-          >
-            Calculate
-          </Button>
-        </Card>
+        <Panel 
+          onClickCalculate={handleCalculate}
+          onClickDownload={() => console.log("download")}
+        />
       </div>
     </div>
   )

@@ -15,9 +15,15 @@
         // width: 500px;
       }
     }
+  }
+}
 
-    .panel {
-      padding: 10px;
-    }
+.panel {
+  padding: 10px;
+
+  .twocolumn {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
   }
 }

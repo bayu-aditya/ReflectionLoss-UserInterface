@@ -141,6 +141,15 @@ export const Panel: React.FC<IPanel> = (props) => {
       >
         Hitung
       </Button>
+
+      <Button
+        className={styles.button}
+        variant="outlined"
+        // onClick={props.onSubmit}
+        fullWidth
+      >
+        Unduh Data Perhitungan
+      </Button>
     </Card>
   )
 }
