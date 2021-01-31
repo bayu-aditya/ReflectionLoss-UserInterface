@@ -58,6 +58,16 @@ function SimulationBody() {
     }
   }
 
+  const handleDownloadResult = (modeCalculation: typeof mode) => {
+    let body = store.request
+
+    if (modeCalculation === "static") {
+      Simulation.downloadResultStatic(body, () => console.log("download result static"))
+    } else {
+      Simulation.downloadResultDynamic(body, () => console.log("donwload result dynamic"))
+    }
+  }
+
   return (
     <Fragment>
       <Head>
@@ -137,6 +147,7 @@ function SimulationBody() {
             onChangeMode={val => setMode(val)}
             onClickDataset={() => setOpenDataset(true)}
             onSubmit={handleCalculateSimulation}
+            onClickDownloadResult={handleDownloadResult}
           />
         </div>
       </div>

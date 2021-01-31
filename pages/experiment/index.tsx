@@ -21,7 +21,7 @@ import {
   initCalculateExperiment } from "@models";
 import { MainLayout, Graph } from "@components";
 
-import { ExperimentProvider } from "./context";
+import { ExperimentProvider, useExperiment } from "./context";
 import { Panel } from "./panel";
 import styles from "./index.module.scss";
 
@@ -39,6 +39,8 @@ export default function ExperimentPage() {
 }
 
 const ExperimentBody: React.FC = () =>  { 
+  const [store] = useExperiment()
+
   const [dataset, setDataset] = useState<datasetExperimentType>(initDataset)
   const [dataCalc, setDataCalc] = useState<calculateExperimentType>(initCalculateExperiment)
 
@@ -54,7 +56,10 @@ const ExperimentBody: React.FC = () =>  {
   }
 
   const handleCalculate = () => {
-    Experiment.calculate(data => setDataCalc({...data}))
+    Experiment.calculate(
+      store.request,
+      data => setDataCalc({...data})
+    )
   }
 
   return (
@@ -141,16 +146,16 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 0}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.reflection_loss.original,
+                data: dataCalc.reflection_loss?.original,
                 label: "Reflection Loss",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.reflection_loss.filter,
+                data: dataCalc.reflection_loss?.filter,
                 label: "Reflection Loss (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
@@ -160,29 +165,29 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 1}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.impedance.real,
+                data: dataCalc.impedance?.real,
                 label: "Real",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.impedance.real_filter,
+                data: dataCalc.impedance?.real_filter,
                 label: "Real (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
               },
               {
-                data: dataCalc.impedance.imag,
+                data: dataCalc.impedance?.imag,
                 label: "Imag",
                 borderColor: 'rgba(0, 0, 255, 0.1)',
                 backgroundColor: 'rgb(0, 0, 255)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.impedance.imag_filter,
+                data: dataCalc.impedance?.imag_filter,
                 label: "Imag (Filter)",
                 borderColor: 'rgb(0, 0, 255)',
                 backgroundColor: 'rgb(0, 0, 255)',
@@ -193,29 +198,29 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 2}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.relative_permitivity.real,
+                data: dataCalc.relative_permitivity?.real,
                 label: "Real",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.relative_permitivity.real_filter,
+                data: dataCalc.relative_permitivity?.real_filter,
                 label: "Real (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
               },
               {
-                data: dataCalc.relative_permitivity.imag,
+                data: dataCalc.relative_permitivity?.imag,
                 label: "Imag",
                 borderColor: 'rgba(0, 0, 255, 0.1)',
                 backgroundColor: 'rgb(0, 0, 255)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.relative_permitivity.imag_filter,
+                data: dataCalc.relative_permitivity?.imag_filter,
                 label: "Imag (Filter)",
                 borderColor: 'rgb(0, 0, 255)',
                 backgroundColor: 'rgb(0, 0, 255)',
@@ -226,29 +231,29 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 3}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.relative_permeability.real,
+                data: dataCalc.relative_permeability?.real,
                 label: "Real",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.relative_permeability.real_filter,
+                data: dataCalc.relative_permeability?.real_filter,
                 label: "Real (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
               },
               {
-                data: dataCalc.relative_permeability.imag,
+                data: dataCalc.relative_permeability?.imag,
                 label: "Imag",
                 borderColor: 'rgba(0, 0, 255, 0.1)',
                 backgroundColor: 'rgb(0, 0, 255)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.relative_permeability.imag_filter,
+                data: dataCalc.relative_permeability?.imag_filter,
                 label: "Imag (Filter)",
                 borderColor: 'rgb(0, 0, 255)',
                 backgroundColor: 'rgb(0, 0, 255)',
@@ -259,29 +264,29 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 4}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.transmitance.real,
+                data: dataCalc.transmitance?.real,
                 label: "Real",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.transmitance.real_filter,
+                data: dataCalc.transmitance?.real_filter,
                 label: "Real (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
               },
               {
-                data: dataCalc.transmitance.imag,
+                data: dataCalc.transmitance?.imag,
                 label: "Imag",
                 borderColor: 'rgba(0, 0, 255, 0.1)',
                 backgroundColor: 'rgb(0, 0, 255)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.transmitance.imag_filter,
+                data: dataCalc.transmitance?.imag_filter,
                 label: "Imag (Filter)",
                 borderColor: 'rgb(0, 0, 255)',
                 backgroundColor: 'rgb(0, 0, 255)',
@@ -292,29 +297,29 @@ const ExperimentBody: React.FC = () =>  {
 
           <Graph 
             hidden={graphMode !== 5}
-            frequency={dataCalc.frequency.label}
+            frequency={dataCalc.frequency?.label}
             dataset={[
               {
-                data: dataCalc.reflectance.real,
+                data: dataCalc.reflectance?.real,
                 label: "Real",
                 borderColor: 'rgba(255, 0, 0, 0.1)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.reflectance.real_filter,
+                data: dataCalc.reflectance?.real_filter,
                 label: "Real (Filter)",
                 borderColor: 'rgb(255, 0, 0)',
                 pointRadius: 0,
               },
               {
-                data: dataCalc.reflectance.imag,
+                data: dataCalc.reflectance?.imag,
                 label: "Imag",
                 borderColor: 'rgba(0, 0, 255, 0.1)',
                 backgroundColor: 'rgb(0, 0, 255)',
                 pointRadius: 2,
               },
               {
-                data: dataCalc.reflectance.imag_filter,
+                data: dataCalc.reflectance?.imag_filter,
                 label: "Imag (Filter)",
                 borderColor: 'rgb(0, 0, 255)',
                 backgroundColor: 'rgb(0, 0, 255)',

@@ -21,7 +21,8 @@
     "paths": {
       "@components": ["components"],
       "@variables": ["variables"],
-      "@models": ["models"]
+      "@models": ["models"],
+      "@tools": ["tools"]
     }
   },
   "include": [

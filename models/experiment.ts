@@ -102,8 +102,24 @@ export const initCalculateExperiment: calculateExperimentType = {
   reflection_loss: {original: [], filter: []}
 }
 
+const initExperimentRequest = {
+  thickness: 4.731,
+  lambda_0: 2.75,
+  lambda_C: 3.98,
+  option: {
+    savgol_filter: {
+      window_length: 9,
+      polyorder: 2
+    }
+  }
+}
+
+export type experimentRequestType = typeof initExperimentRequest
+
+
 export class ExperimentModel {
   data: datasetExperimentType = initDataset
+  request: experimentRequestType = initExperimentRequest
 
   uploadDataset(file: File, onSuccess?: () => void) {
     let formData = new FormData()
@@ -181,20 +197,10 @@ export class ExperimentModel {
   }
 
   calculate(
+    body: experimentRequestType,
     onSuccess?: (data: calculateExperimentType) => void
   ) {
     let key = Cookies.get("key_experiment")
-    let body = {
-      thickness: 4.731,
-      lambda_0: 2.75,
-      lambda_C: 3.98,
-      option: {
-        savgol_filter: {
-          window_length: 9,
-          polyorder: 2
-        }
-    }
-    }
     
     Axios.post<calculateExperimentType>(apiUrl.experiment.calculate, body, {
       headers: {"key": key}

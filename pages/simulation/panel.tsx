@@ -15,6 +15,7 @@ interface IPanel {
   mode: "static" | "dynamic"
   onChangeMode?: (mode: "static" | "dynamic") => void
   onClickDataset?: () => void
+  onClickDownloadResult?: (mode: "static" | "dynamic") => void
   onSubmit?: () => void
 }
 
@@ -145,7 +146,7 @@ export const Panel: React.FC<IPanel> = (props) => {
       <Button
         className={styles.button}
         variant="outlined"
-        // onClick={props.onSubmit}
+        onClick={() => props.onClickDownloadResult && props.onClickDownloadResult(mode)}
         fullWidth
       >
         Unduh Data Perhitungan

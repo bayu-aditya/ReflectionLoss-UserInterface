@@ -2,7 +2,7 @@ import Axios from "axios";
 import Cookies from "js-cookie"
 
 import { apiUrl } from "@variables";
-import { OutlinedFlagOutlined } from "@material-ui/icons";
+import { Downloader } from "@tools";
 
 type responseUploadInputDatasetType = {
   message: string
@@ -134,6 +134,20 @@ export class SimulationModel {
     })
   }
 
+  downloadResultStatic(
+    body: simulationRequestType,
+    onSuccess?: () => void
+  ) {
+    Axios.post(apiUrl.simulation.calculate, body, {
+      headers: {"download_result": true},
+      responseType: 'blob',
+    })
+    .then((resp) => {
+      Downloader(resp)
+      onSuccess && onSuccess()
+    })
+  }
+
   uploadInputData(
     file: File,
     onSuccess?: (key: string) => void
@@ -217,5 +231,22 @@ export class SimulationModel {
     })
   }
 
-  // downloadCSV() {}
+  downloadResultDynamic(
+    body: simulationRequestType,
+    onSuccess?: () => void
+  ) {
+    let key = Cookies.get("key_simulation")
+
+    Axios.post(apiUrl.simulation.calculateWithData, body, {
+      headers: {
+        "key": key,
+        "download_result": true
+      },
+      responseType: 'blob',
+    })
+    .then((resp) => {
+      Downloader(resp)
+      onSuccess && onSuccess()
+    })
+  }
 }
