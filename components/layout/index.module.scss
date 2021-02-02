@@ -4,8 +4,15 @@
 
   .appbar {
     .toolbar {
+      display: flex;
+      justify-content: space-between;
+
       .title {
         font-weight: 700;
+      }
+      .button {
+        color: white;
+        font-weight: 900;
       }
     }
   }
