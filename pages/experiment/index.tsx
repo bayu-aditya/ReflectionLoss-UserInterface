@@ -91,6 +91,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 0}
               frequency={dataCalc.frequency?.label}
+              ylabel="Reflection Loss"
               dataset={[
                 {
                   data: dataCalc.reflection_loss?.original,
@@ -110,6 +111,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 1}
               frequency={dataCalc.frequency?.label}
+              ylabel="Impedance"
               dataset={[
                 {
                   data: dataCalc.impedance?.real,
@@ -143,6 +145,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 2}
               frequency={dataCalc.frequency?.label}
+              ylabel="Relative Permitivity"
               dataset={[
                 {
                   data: dataCalc.relative_permitivity?.real,
@@ -176,6 +179,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 3}
               frequency={dataCalc.frequency?.label}
+              ylabel="Relative Permeability"
               dataset={[
                 {
                   data: dataCalc.relative_permeability?.real,
@@ -209,6 +213,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 4}
               frequency={dataCalc.frequency?.label}
+              ylabel="Transmitance"
               dataset={[
                 {
                   data: dataCalc.transmitance?.real,
@@ -242,6 +247,7 @@ const ExperimentBody: React.FC = () =>  {
             <Graph 
               hidden={graphMode !== 5}
               frequency={dataCalc.frequency?.label}
+              ylabel="Reflectance"
               dataset={[
                 {
                   data: dataCalc.reflectance?.real,

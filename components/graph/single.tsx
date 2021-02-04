@@ -75,6 +75,7 @@ export interface GraphProps extends React.HTMLAttributes<HTMLDivElement> {
     backgroundColor?: string,
     borderColor?: string,
   }>
+  ylabel: string
 }
 
 export const Graph: React.FC<GraphProps> = (props) => {
@@ -89,7 +90,21 @@ export const Graph: React.FC<GraphProps> = (props) => {
     <div {...props}>
       <Line 
         data={data}
-        options={optionsInit}
+        options={{
+          ...optionsInit,
+          scales: {
+            ...optionsInit.scales,
+            yAxes: [
+              ...optionsInit.scales.yAxes.map(el => ({
+                ...el,
+                scaleLabel: {
+                  ...el.scaleLabel,
+                  labelString: props.ylabel
+                }
+              }))
+            ]
+          }
+        }}
       />
     </div>
   )

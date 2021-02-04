@@ -23,8 +23,6 @@ export const MainLayout: React.FC = (props) => {
   }
 
   const handleChangeMode = (value: "simulation" | "experiment") => {
-    console.log(value)
-
     if (value === "simulation") {
       window.location.href = "/simulation"
     } else if (value === "experiment") {
@@ -56,10 +54,10 @@ export const MainLayout: React.FC = (props) => {
             onClose={handleCloseMode}
           >            
             <MenuItem
-              onChange={() => handleChangeMode("simulation")}
+              onClick={() => handleChangeMode("simulation")}
             >Simulation</MenuItem>
             <MenuItem 
-              onChange={() => handleChangeMode("experiment")} 
+              onClick={() => handleChangeMode("experiment")} 
             >Experiment</MenuItem>
           </Menu>
         </Toolbar>

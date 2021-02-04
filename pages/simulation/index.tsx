@@ -95,6 +95,7 @@ function SimulationBody() {
             <Graph 
               hidden={graphMode !== 0}
               frequency={store.data.frequency?.label}
+              ylabel="Relection Loss"
               dataset={[
                 {
                   data: store.data.reflection_loss?.original,
@@ -113,6 +114,7 @@ function SimulationBody() {
             <Graph 
               hidden={graphMode !== 1}
               frequency={store.data.frequency?.label}
+              ylabel="Impedance"
               dataset={[
                 {
                   data: store.data.impedance?.real,
