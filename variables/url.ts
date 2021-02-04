@@ -1,5 +1,5 @@
-// const apiHost = "https://azwaradam.com/api"
-const apiHost = "http://localhost:5000/api"
+const apiHost = "https://azwaradam.com/api"
+// const apiHost = "http://localhost:5000/api"
 
 export const apiUrl = {
   simulation: {
