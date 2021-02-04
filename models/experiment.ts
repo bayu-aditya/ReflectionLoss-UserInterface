@@ -2,6 +2,7 @@ import Axios from "axios";
 import Cookies from "js-cookie";
 
 import { apiUrl } from "@variables";
+import { Downloader } from "@tools";
 
 type responseUploadDatasetType = {
   message: string
@@ -118,7 +119,7 @@ export type experimentRequestType = typeof initExperimentRequest
 
 
 export class ExperimentModel {
-  data: datasetExperimentType = initDataset
+  dataset: datasetExperimentType = initDataset
   request: experimentRequestType = initExperimentRequest
 
   uploadDataset(file: File, onSuccess?: () => void) {
@@ -182,17 +183,17 @@ export class ExperimentModel {
         s22i.push(val)
       })
 
-      this.data.frequency = freqs
-      this.data.s11.real = s11r
-      this.data.s11.imag = s11i
-      this.data.s12.real = s12r
-      this.data.s12.imag = s12i
-      this.data.s21.real = s21r
-      this.data.s21.imag = s21i
-      this.data.s22.real = s22r
-      this.data.s22.imag = s22i
+      this.dataset.frequency = freqs
+      this.dataset.s11.real = s11r
+      this.dataset.s11.imag = s11i
+      this.dataset.s12.real = s12r
+      this.dataset.s12.imag = s12i
+      this.dataset.s21.real = s21r
+      this.dataset.s21.imag = s21i
+      this.dataset.s22.real = s22r
+      this.dataset.s22.imag = s22i
 
-      onSuccess && onSuccess(this.data)
+      onSuccess && onSuccess(this.dataset)
     })    
   }
 
@@ -207,6 +208,25 @@ export class ExperimentModel {
     })
     .then(resp => {
       onSuccess && onSuccess(resp.data)
+    })
+  }
+
+  downloadResult(
+    body: experimentRequestType,
+    onSuccess?: () => void
+  ) {
+    let key = Cookies.get("key_experiment")
+
+    Axios.post(apiUrl.experiment.calculate, body, {
+      headers: {
+        "key": key,
+        "download_result": true
+      },
+      responseType: 'blob',
+    })
+    .then(resp => {
+      Downloader(resp)
+      onSuccess && onSuccess()
     })
   }
 }

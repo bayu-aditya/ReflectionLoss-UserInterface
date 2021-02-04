@@ -94,15 +94,15 @@ function SimulationBody() {
 
             <Graph 
               hidden={graphMode !== 0}
-              frequency={store.data.frequency.label}
+              frequency={store.data.frequency?.label}
               dataset={[
                 {
-                  data: store.data.reflection_loss.original,
+                  data: store.data.reflection_loss?.original,
                   label: "Original",
                   borderColor: 'rgba(255, 0, 0, 0.2)',
                 },
                 {
-                  data: store.data.reflection_loss.filter,
+                  data: store.data.reflection_loss?.filter,
                   label: "Filter",
                   borderColor: 'rgb(255, 0, 0)',
                   pointRadius: 0,
@@ -112,27 +112,27 @@ function SimulationBody() {
 
             <Graph 
               hidden={graphMode !== 1}
-              frequency={store.data.frequency.label}
+              frequency={store.data.frequency?.label}
               dataset={[
                 {
-                  data: store.data.impedance.real,
+                  data: store.data.impedance?.real,
                   label: "Real",
                   borderColor: 'rgba(255, 0, 0, 0.2)',
                 },
                 {
-                  data: store.data.impedance.real_filter,
+                  data: store.data.impedance?.real_filter,
                   label: "Real Filter",
                   borderColor: 'rgb(255, 0, 0)',
                   pointRadius: 0,
                 },
                 {
-                  data: store.data.impedance.imag,
+                  data: store.data.impedance?.imag,
                   label: "Imag",
                   borderColor: 'rgba(0, 0, 250, 0.2)',
                   backgroundColor: 'rgb(0, 0, 250)',
                 },
                 {
-                  data: store.data.impedance.imag_filter,
+                  data: store.data.impedance?.imag_filter,
                   label: "Imag Filter",
                   borderColor: 'rgb(0, 0, 250)',
                   backgroundColor: 'rgb(0, 0, 250)',

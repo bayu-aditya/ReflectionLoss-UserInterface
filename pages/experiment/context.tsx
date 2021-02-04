@@ -9,13 +9,13 @@ import { ExperimentModel } from "@models";
 const Experiment = new ExperimentModel()
 
 const initStoreContext = {
-  data: Experiment.data,
+  dataset: Experiment.dataset,
   request: Experiment.request
 }
 type storeContextType = typeof initStoreContext
 
 type Action = 
-  | {type: "setDataCalculation", payload: storeContextType["data"]}
+  | {type: "setDataset", payload: storeContextType["dataset"]}
   | {type: "setThickness", payload: number}
   | {type: "setLambda0", payload: number}
   | {type: "setLambdaC", payload: number}
@@ -23,8 +23,8 @@ type Action =
 
 const reducerExperiment = (prev: storeContextType, action: Action): storeContextType => {
   switch (action.type) {
-    case "setDataCalculation":
-      return {...prev, data: action.payload}
+    case "setDataset":
+      return {...prev, dataset: action.payload}
     case "setThickness": 
       return {...prev, request: {...prev.request, thickness: action.payload}}
     case "setLambda0":

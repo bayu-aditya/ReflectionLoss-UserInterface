@@ -4,6 +4,7 @@ import { useExperiment } from "./context";
 import styles from "./index.module.scss";
 
 interface PanelProps {
+  onClickDataset: () => void
   onClickCalculate: () => void
   onClickDownload: () => void
 }
@@ -51,7 +52,7 @@ export const Panel: React.FC<PanelProps> = (props) => {
       <Button
         variant="outlined"
         fullWidth
-        // onClick={handleCalculate}
+        onClick={props.onClickDataset}
       >
         Dataset
       </Button>
